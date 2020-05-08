@@ -9,13 +9,6 @@ import (
 
 type ginkgoHook func(body interface{}, timeout ...float64) bool
 
-// SuiteTempDir returns a function that returns a temporary directory string when invoked
-// that is cached across the suite.
-// The temporary directory is cleaned up after the suite has finished.
-func SuiteTempDir() func() string {
-	return eachTempDir("suite", ginkgo.BeforeSuite, ginkgo.AfterSuite)
-}
-
 // EachTempDir returns a function that returns a temporary directory string when invoked
 // that is cached across a single test.
 // The temporary directory is cleaned up after the test has finished.

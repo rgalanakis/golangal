@@ -3,6 +3,8 @@ package golangal
 import (
 	"github.com/onsi/ginkgo"
 	"github.com/onsi/gomega"
+	"github.com/onsi/gomega/types"
+	"github.com/rgalanakis/golangal/matchers"
 	"io/ioutil"
 	"os"
 )
@@ -72,4 +74,15 @@ func EnvVars() func(key, value string) {
 		}
 		gomega.Expect(os.Setenv(k, v)).To(gomega.Succeed())
 	}
+}
+
+func HaveHeader(key string, inner types.GomegaMatcher) types.GomegaMatcher {
+	return &matchers.HaveHeaderMatcher{Key: key, Inner: inner}
+}
+
+func HaveJsonBody(inner types.GomegaMatcher) types.GomegaMatcher {
+	return &matchers.HaveJsonBodyMatcher{Inner: inner}
+}
+func HaveResponseCode(codeOrMatcher interface{}) types.GomegaMatcher {
+	return &matchers.HaveResponseCodeMatcher{CodeOrMatcher: codeOrMatcher}
 }

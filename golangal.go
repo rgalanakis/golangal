@@ -92,14 +92,6 @@ func HaveResponseCode(codeOrMatcher interface{}) types.GomegaMatcher {
 	return &matchers.HaveResponseCodeMatcher{CodeOrMatcher: codeOrMatcher}
 }
 
-// PanicWith succeeds if actual is a function that, when invoked, panics.
-// The panic message must match the given panicMatcher,
-// which is matched against the object used for the panic (usually a string or error).
-// Actual must be a function that takes no arguments and returns no results.
-func PanicWith(panicMatcher types.GomegaMatcher) types.GomegaMatcher {
-	return &matchers.PanicWith{PanicMatcher: panicMatcher}
-}
-
 // AtEvery succeeds when every element in a slice matches the given matcher.
 // Used to assert an expectation against every element in a collection.
 func AtEvery(m types.GomegaMatcher) types.GomegaMatcher {

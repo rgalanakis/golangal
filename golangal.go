@@ -83,6 +83,64 @@ func HaveHeader(key string, inner types.GomegaMatcher) types.GomegaMatcher {
 func HaveJsonBody(inner types.GomegaMatcher) types.GomegaMatcher {
 	return &matchers.HaveJsonBodyMatcher{Inner: inner}
 }
+
+// HaveResponseCode is a Gomega matcher to ensure an
+// *httptest.ResponseRecorder has the expected response code.
+// If it does not, the actual code and body are printed
+// (the body is really useful information when tests fail).
 func HaveResponseCode(codeOrMatcher interface{}) types.GomegaMatcher {
 	return &matchers.HaveResponseCodeMatcher{CodeOrMatcher: codeOrMatcher}
+}
+
+// PanicWith succeeds if actual is a function that, when invoked, panics.
+// The panic message must match the given panicMatcher,
+// which is matched against the object used for the panic (usually a string or error).
+// Actual must be a function that takes no arguments and returns no results.
+func PanicWith(panicMatcher types.GomegaMatcher) types.GomegaMatcher {
+	return &matchers.PanicWith{PanicMatcher: panicMatcher}
+}
+
+// AtEvery succeeds when every element in a slice matches the given matcher.
+// Used to assert an expectation against every element in a collection.
+func AtEvery(m types.GomegaMatcher) types.GomegaMatcher {
+	return &matchers.AtEveryMatcher{Matcher: m}
+}
+
+// AtIndex succeeds when the slice element at the given index matches the given matcher.
+func AtIndex(idx int, m types.GomegaMatcher) types.GomegaMatcher {
+	return &matchers.AtIndexMatcher{Index: idx, Matcher: m}
+}
+
+// AtKey succeeds when the element of a slice at the given key matches the given matcher.
+func AtKey(key interface{}, m types.GomegaMatcher) types.GomegaMatcher {
+	return &matchers.AtKeyMatcher{Key: key, Matcher: m}
+}
+
+// MatchLen matches the length of a collection against a matcher.
+// It's like HaveLen, but allows a dynamic length.
+// HaveLen(2) would be equivalent to MatchLen(Equal(2)).
+func MatchLen(m types.GomegaMatcher) types.GomegaMatcher {
+	return &matchers.MatchLenMatcher{Matcher: m}
+}
+
+// MatchField matches the the value of the field named name on the actual struct.
+// If m is a gomega matcher, it is matched against the field value.
+// Otherwise, test against field equality.
+//
+//     Expect(MyStruct{Field1: 10}).To(MatchField("Field1", 10))
+//     Expect(MyStruct{Field1: 10}).To(MatchField("Field1", BeNumerically(">", 5)))
+//
+// You can match multiple fields by using SatisfyAll or And:
+//
+//     o := MyStruct{Field1: 10, Field2: true}
+//     Expect(o).To(SatisfyAll(MatchField("Field1", 10), MatchField("Field2", BeTrue())))
+//
+func MatchField(name string, m interface{}) types.GomegaMatcher {
+	var matcher types.GomegaMatcher
+	if casted, ok := m.(types.GomegaMatcher); ok {
+		matcher = casted
+	} else {
+		matcher = gomega.Equal(m)
+	}
+	return &matchers.MatchFieldMatcher{Name: name, Matcher: matcher}
 }

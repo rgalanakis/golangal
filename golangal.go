@@ -3,7 +3,7 @@ package golangal
 import (
 	"github.com/onsi/ginkgo"
 	"github.com/onsi/gomega"
-	"github.com/onsi/gomega/types"
+	"github.com/rgalanakis/golangal/internal"
 	"github.com/rgalanakis/golangal/matchers"
 	"io/ioutil"
 	"os"
@@ -76,43 +76,43 @@ func EnvVars() func(key, value string) {
 	}
 }
 
-func HaveHeader(key string, inner types.GomegaMatcher) types.GomegaMatcher {
-	return &matchers.HaveHeaderMatcher{Key: key, Inner: inner}
+func HaveHeader(key string, m interface{}) gomega.OmegaMatcher {
+	return &matchers.HaveHeaderMatcher{Key: key, Inner: internal.CoerceToMatcher(m)}
 }
 
-func HaveJsonBody(inner types.GomegaMatcher) types.GomegaMatcher {
-	return &matchers.HaveJsonBodyMatcher{Inner: inner}
+func HaveJsonBody(m interface{}) gomega.OmegaMatcher {
+	return &matchers.HaveJsonBodyMatcher{Inner: internal.CoerceToMatcher(m)}
 }
 
 // HaveResponseCode is a Gomega matcher to ensure an
 // *httptest.ResponseRecorder has the expected response code.
 // If it does not, the actual code and body are printed
 // (the body is really useful information when tests fail).
-func HaveResponseCode(codeOrMatcher interface{}) types.GomegaMatcher {
+func HaveResponseCode(codeOrMatcher interface{}) gomega.OmegaMatcher {
 	return &matchers.HaveResponseCodeMatcher{CodeOrMatcher: codeOrMatcher}
 }
 
 // AtEvery succeeds when every element in a slice matches the given matcher.
 // Used to assert an expectation against every element in a collection.
-func AtEvery(m types.GomegaMatcher) types.GomegaMatcher {
-	return &matchers.AtEveryMatcher{Matcher: m}
+func AtEvery(m interface{}) gomega.OmegaMatcher {
+	return &matchers.AtEveryMatcher{Matcher: internal.CoerceToMatcher(m)}
 }
 
 // AtIndex succeeds when the slice element at the given index matches the given matcher.
-func AtIndex(idx int, m types.GomegaMatcher) types.GomegaMatcher {
-	return &matchers.AtIndexMatcher{Index: idx, Matcher: m}
+func AtIndex(idx int, m interface{}) gomega.OmegaMatcher {
+	return &matchers.AtIndexMatcher{Index: idx, Matcher: internal.CoerceToMatcher(m)}
 }
 
 // AtKey succeeds when the element of a slice at the given key matches the given matcher.
-func AtKey(key interface{}, m types.GomegaMatcher) types.GomegaMatcher {
-	return &matchers.AtKeyMatcher{Key: key, Matcher: m}
+func AtKey(key interface{}, m interface{}) gomega.OmegaMatcher {
+	return &matchers.AtKeyMatcher{Key: key, Matcher: internal.CoerceToMatcher(m)}
 }
 
 // MatchLen matches the length of a collection against a matcher.
 // It's like HaveLen, but allows a dynamic length.
 // HaveLen(2) would be equivalent to MatchLen(Equal(2)).
-func MatchLen(m types.GomegaMatcher) types.GomegaMatcher {
-	return &matchers.MatchLenMatcher{Matcher: m}
+func MatchLen(m interface{}) gomega.OmegaMatcher {
+	return &matchers.MatchLenMatcher{Matcher: internal.CoerceToMatcher(m)}
 }
 
 // MatchField matches the the value of the field named name on the actual struct.
@@ -127,12 +127,6 @@ func MatchLen(m types.GomegaMatcher) types.GomegaMatcher {
 //     o := MyStruct{Field1: 10, Field2: true}
 //     Expect(o).To(SatisfyAll(MatchField("Field1", 10), MatchField("Field2", BeTrue())))
 //
-func MatchField(name string, m interface{}) types.GomegaMatcher {
-	var matcher types.GomegaMatcher
-	if casted, ok := m.(types.GomegaMatcher); ok {
-		matcher = casted
-	} else {
-		matcher = gomega.Equal(m)
-	}
-	return &matchers.MatchFieldMatcher{Name: name, Matcher: matcher}
+func MatchField(name string, m interface{}) gomega.OmegaMatcher {
+	return &matchers.MatchFieldMatcher{Name: name, Matcher: internal.CoerceToMatcher(m)}
 }

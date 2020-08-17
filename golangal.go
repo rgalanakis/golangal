@@ -130,3 +130,20 @@ func MatchLen(m interface{}) gomega.OmegaMatcher {
 func MatchField(name string, m interface{}) gomega.OmegaMatcher {
 	return &matchers.MatchFieldMatcher{Name: name, Matcher: internal.CoerceToMatcher(m)}
 }
+
+// NotError is like gomega's Succeed matcher, except it handles functions which
+// return multiple values. The docs say this:
+//
+// You should not use a function with multiple return values (like DoSomethingHard) with Succeed.
+// Matchers are only passed the first value provided to Ω/Expect,
+// the subsequent arguments are handled by Ω and Expect as outlined above.
+// As a result of this behavior Ω(DoSomethingHard()).ShouldNot(Succeed()) would never pass.
+//
+// We can circumvent this by using a noop matcher, and allowing Gomega's internal Expect behavior
+// to assert that an error wasn't returned (this matcher will fail if it receives an error).
+//
+//     Expect(DoSomethingHard()).To(NotError())
+//
+func NotError() gomega.OmegaMatcher {
+	return &matchers.NotErrorMatcher{}
+}

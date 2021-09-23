@@ -115,7 +115,7 @@ func MatchLen(m interface{}) gomega.OmegaMatcher {
 	return &matchers.MatchLenMatcher{Matcher: internal.CoerceToMatcher(m)}
 }
 
-// MatchField matches the the value of the field named name on the actual struct.
+// MatchField matches the value of the field named name on the actual struct.
 // If m is a gomega matcher, it is matched against the field value.
 // Otherwise, test against field equality.
 //
@@ -129,6 +129,11 @@ func MatchLen(m interface{}) gomega.OmegaMatcher {
 //
 func MatchField(name string, m interface{}) gomega.OmegaMatcher {
 	return &matchers.MatchFieldMatcher{Name: name, Matcher: internal.CoerceToMatcher(m)}
+}
+
+// MatchPtrField is same as MatchField, but the actual object should be a pointer, not a struct.
+func MatchPtrField(name string, m interface{}) gomega.OmegaMatcher {
+	return &matchers.MatchPtrFieldMatcher{Name: name, Matcher: internal.CoerceToMatcher(m)}
 }
 
 // NotError is like gomega's Succeed matcher, except it handles functions which

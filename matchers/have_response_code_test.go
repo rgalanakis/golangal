@@ -2,7 +2,7 @@ package matchers_test
 
 import (
 	"bytes"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/rgalanakis/golangal"
 	"github.com/rgalanakis/golangal/matchers"

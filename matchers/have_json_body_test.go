@@ -2,7 +2,7 @@ package matchers_test
 
 import (
 	"bytes"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/rgalanakis/golangal"
 	"github.com/rgalanakis/golangal/matchers"
@@ -32,9 +32,10 @@ var _ = Describe("HaveJsonBodyMatcher", func() {
 		Expect(success).To(BeFalse())
 		Expect(err).ToNot(HaveOccurred())
 		Expect(matcher.FailureMessage(resp)).To(HavePrefix(`Expected
-    <map[string]interface {} | len:1>: {"a": 1}
+    <map[string]interface {} | len:1>: {"a": <float64>1}
 to have {key: value} matching
-    <map[interface {}]interface {} | len:1>: {"b": {Expected: 2}}`))
+    <map[interface {}]interface {} | len:1>: {
+        <string>"b": <*matchers.BeEquivalentToMatcher | 0`))
 	})
 	It("fails if the body is not valid json", func() {
 		resp := newRr(`{"a`)

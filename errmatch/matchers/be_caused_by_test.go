@@ -3,7 +3,7 @@ package matchers_test
 import (
 	"errors"
 	"github.com/hashicorp/go-multierror"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	pkgerrors "github.com/pkg/errors"
 	. "github.com/rgalanakis/golangal/errmatch"

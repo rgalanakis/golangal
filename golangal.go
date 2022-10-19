@@ -1,7 +1,7 @@
 package golangal
 
 import (
-	"github.com/onsi/ginkgo"
+	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	"github.com/rgalanakis/golangal/internal"
 	"github.com/rgalanakis/golangal/matchers"
@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-type ginkgoHook func(body interface{}, timeout ...float64) bool
+type ginkgoHook func(args ...interface{}) bool
 
 // EachTempDir returns a function that returns a temporary directory string when invoked
 // that is cached across a single test.
@@ -17,11 +17,11 @@ type ginkgoHook func(body interface{}, timeout ...float64) bool
 //
 // Example:
 //
-//    tempdir := golangal.EachTempDir()
-//    It("writes a file", func() {
-//      path := filepath.Join(tempdir(), "some-file.txt")
-//      ...
-//    })
+//	tempdir := golangal.EachTempDir()
+//	It("writes a file", func() {
+//	  path := filepath.Join(tempdir(), "some-file.txt")
+//	  ...
+//	})
 func EachTempDir() func() string {
 	return eachTempDir("each", ginkgo.BeforeEach, ginkgo.AfterEach)
 }
@@ -46,11 +46,11 @@ func eachTempDir(scope string, before, after ginkgoHook) func() string {
 //
 // Example:
 //
-//    addEnvVar := golangal.EnvVars()
-//    It("reads the env", func() {
-//      addEnvVar("MY_CONFIG_VAR", "XYZ")
-//      ...
-//    })
+//	addEnvVar := golangal.EnvVars()
+//	It("reads the env", func() {
+//	  addEnvVar("MY_CONFIG_VAR", "XYZ")
+//	  ...
+//	})
 func EnvVars() func(key, value string) {
 	var envVars map[string]*string
 	ginkgo.BeforeEach(func() {
@@ -119,14 +119,13 @@ func MatchLen(m interface{}) gomega.OmegaMatcher {
 // If m is a gomega matcher, it is matched against the field value.
 // Otherwise, test against field equality.
 //
-//     Expect(MyStruct{Field1: 10}).To(MatchField("Field1", 10))
-//     Expect(MyStruct{Field1: 10}).To(MatchField("Field1", BeNumerically(">", 5)))
+//	Expect(MyStruct{Field1: 10}).To(MatchField("Field1", 10))
+//	Expect(MyStruct{Field1: 10}).To(MatchField("Field1", BeNumerically(">", 5)))
 //
 // You can match multiple fields by using SatisfyAll or And:
 //
-//     o := MyStruct{Field1: 10, Field2: true}
-//     Expect(o).To(SatisfyAll(MatchField("Field1", 10), MatchField("Field2", BeTrue())))
-//
+//	o := MyStruct{Field1: 10, Field2: true}
+//	Expect(o).To(SatisfyAll(MatchField("Field1", 10), MatchField("Field2", BeTrue())))
 func MatchField(name string, m interface{}) gomega.OmegaMatcher {
 	return &matchers.MatchFieldMatcher{Name: name, Matcher: internal.CoerceToMatcher(m)}
 }
@@ -147,8 +146,7 @@ func MatchPtrField(name string, m interface{}) gomega.OmegaMatcher {
 // We can circumvent this by using a noop matcher, and allowing Gomega's internal Expect behavior
 // to assert that an error wasn't returned (this matcher will fail if it receives an error).
 //
-//     Expect(DoSomethingHard()).To(NotError())
-//
+//	Expect(DoSomethingHard()).To(NotError())
 func NotError() gomega.OmegaMatcher {
 	return &matchers.NotErrorMatcher{}
 }

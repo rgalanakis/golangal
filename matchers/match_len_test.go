@@ -1,6 +1,7 @@
 package matchers_test
 
 import (
+	"bytes"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/rgalanakis/golangal"
@@ -42,10 +43,25 @@ not to match, but did with
         <int>: 3`))
 	})
 
-	It("errors if the type is not a slice/string/array", func() {
+	It("matches a matcher against the length of an object with a Len method", func() {
+		Expect(CustomLen{3}).To(MatchLen(3))
+		Expect(slice).ToNot(MatchLen(Equal(1)))
+		Expect(bytes.NewBufferString("abc")).To(MatchLen(3))
+		Expect(bytes.NewBufferString("abc")).ToNot(MatchLen(4))
+	})
+
+	It("errors if the type is not a slice/string/array and is not a hasLen", func() {
 		success, err := MatchLen(Equal(1)).Match(5)
 		Expect(success).To(BeFalse())
-		Expect(err).To(MatchError(`MatchLen matcher expects a string/array/map/channel/slice. Got:
+		Expect(err).To(MatchError(`MatchLen matcher expects a string/array/map/channel/slice, or type with a Len() int method. Got:
     <int>: 5`))
 	})
 })
+
+type CustomLen struct {
+	length int
+}
+
+func (cl CustomLen) Len() int {
+	return cl.length
+}

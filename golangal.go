@@ -111,8 +111,17 @@ func AtKey(key interface{}, m interface{}) gomega.OmegaMatcher {
 // MatchLen matches the length of a collection against a matcher.
 // It's like HaveLen, but allows a dynamic length.
 // HaveLen(2) would be equivalent to MatchLen(Equal(2)).
+// MatchLen also works with any type with a Len() int method.
 func MatchLen(m interface{}) gomega.OmegaMatcher {
 	return &matchers.MatchLenMatcher{Matcher: internal.CoerceToMatcher(m)}
+}
+
+// MatchCap matches the length of a collection against a matcher.
+// It's like HaveCap, but allows a dynamic length.
+// HaveCap(2) would be equivalent to MatchCap(Equal(2)).
+// MatchCap also works with any type with a Cap() int method.
+func MatchCap(m interface{}) gomega.OmegaMatcher {
+	return &matchers.MatchCapMatcher{Matcher: internal.CoerceToMatcher(m)}
 }
 
 // MatchField matches the value of the field named name on the actual struct.
